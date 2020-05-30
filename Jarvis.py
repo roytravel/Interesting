@@ -6,6 +6,8 @@ import wolframalpha
 import wikipedia
 import webbrowser
 from selenium import webdriver
+from gtts import gTTS
+import socket
 
 class Speech(object):
 
@@ -54,8 +56,8 @@ class Search(object):
         self.app_id = os.environ.get('WOLFRAMALPHA_APP_ID')
         self.client = wolframalpha.Client(self.app_id)
 
-    
-    def find(self,keyword):
+    # 지식 검색
+    def wiki(self,keyword):
         try:
             try:
                 result = wikipedia.summary(keyword, sentences=2)
@@ -69,13 +71,18 @@ class Search(object):
         except Exception as error:
             print (error)
             pass
-
+    
+    def google(self, keyword):
+        ''' need to add'''
+        pass
+    
 
 class Listen(object):
 
     def __init__(self):
         pass
 
+    # 사용자 음성 인식
     def say(self):
         r = sr.Recognizer()
         with sr.Microphone() as source:
@@ -96,7 +103,8 @@ class Listen(object):
 class Action(object):
     def __init__(self):
         self.chrome_driver = os.environ.get('CHROME')
-        
+    
+    # 사용자 음성에 따른 유튜브 비디오 검색
     def youtube(self):
         S.speak("무슨 노래 듣고 싶어?")
         data = L.say()
@@ -107,7 +115,40 @@ class Action(object):
         url = "https://www.youtube.com/results?search_query={}".format(data)
         driver.get(url)
         driver.find_element_by_xpath('/html/body/ytd-app/div/ytd-page-manager/ytd-search/div[1]/ytd-two-column-search-results-renderer/div/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-video-renderer[1]/div[1]/ytd-thumbnail/a').click()
-        
+
+
+class Data(object):
+
+    def __init__(self):
+        pass
+
+    # 사용자의 음성 데이터 수집
+    def save(self, data):
+        print(data)
+        tts = gTTS(text=data, lang='en')
+        tts.save("<PATH>")
+        os.system("<PATH>")
+
+    # 사용자의 IP 정보 수집
+    def address(self):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.connect(('gmail.com', 80))
+        res = sock.getsockname()[0]
+        sock.close()
+        return res
+
+    # 사용자의 MAC 정보 수집
+    def mac(self):
+        pass
+
+    # 음성인식 시간 정보 수집
+    def time(self):
+        pass
+
+    # 데이터베이스로 사용자 정보 송신
+    def send(self):
+        '''Send to database '''
+        pass
 
 
 if __name__ == '__main__':
@@ -116,7 +157,8 @@ if __name__ == '__main__':
     L = Listen()
     A = Action()
 
-    data = L.say()
+    # data = L.say()
 
-    if 'youtube' in data.lower():
-        A.youtube()
+    # if 'youtube' in data.lower():
+    #     A.youtube()
+    
