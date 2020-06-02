@@ -8,6 +8,9 @@ import webbrowser
 from selenium import webdriver
 from gtts import gTTS
 import socket
+import json
+import requests
+
 
 class Speech(object):
 
@@ -76,6 +79,25 @@ class Search(object):
         ''' need to add'''
         pass
     
+    def geometry(self, data):
+        # 위도 경도 반환 (카카오 API 사용)
+        url = "https://dapi.kakao.com/v2/local/search/address.json?query={}".format(data)
+        api = os.environ.get('KakaoAK')
+        api = "KakaoAK " + api
+        headers = {"Authorization": api}
+        result = json.loads(str(requests.get(url ,headers=headers).text))
+        match_first = result['documents'][0]['address']
+        return float(match_first['y']),float(match_first['x'])
+
+
+    def wether(self, longitude, latitude):
+        appid = os.environ.get('OpenWetherAPI')
+        url = "http://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&appid={}".format(longitude, latitude, appid)
+        response = requests.get(url)
+        return response.text
+
+
+
 
 class Listen(object):
 
@@ -157,8 +179,8 @@ if __name__ == '__main__':
     L = Listen()
     A = Action()
 
-    # data = L.say()
-
-    # if 'youtube' in data.lower():
-    #     A.youtube()
-    
+    data = ""
+    S.speak(data)
+    longtidue, latitude = R.geometry(data)
+    result = R.wether(longtidue, latitude)
+    print (result)
