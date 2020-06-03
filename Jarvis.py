@@ -10,6 +10,7 @@ from gtts import gTTS
 import socket
 import json
 import requests
+import youtube_dl
 
 
 class Speech(object):
@@ -97,8 +98,6 @@ class Search(object):
         return response.text
 
 
-
-
 class Listen(object):
 
     def __init__(self):
@@ -137,6 +136,31 @@ class Action(object):
         url = "https://www.youtube.com/results?search_query={}".format(data)
         driver.get(url)
         driver.find_element_by_xpath('/html/body/ytd-app/div/ytd-page-manager/ytd-search/div[1]/ytd-two-column-search-results-renderer/div/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-video-renderer[1]/div[1]/ytd-thumbnail/a').click()
+
+
+    def download_video_and_subtitle(self, youtube_video_list):
+        download_path = ''  # 다운로드 경로
+        download_path = os.path.join(download_path, '%(id)s-%(title)s.%(ext)s')
+        
+        for video_url in youtube_video_list:
+            # youtube_dl options
+            ydl_opts = {
+                'format': 'best/best',  # 가장 좋은 화질로 선택(화질을 선택하여 다운로드 가능)
+                'outtmpl': download_path, # 다운로드 경로 설정
+                'writesubtitles': 'best', # 자막 다운로드(자막이 없는 경우 다운로드 X)
+                'writethumbnail': 'best',  # 영상 thumbnail 다운로드
+                'writeautomaticsub': True, # 자동 생성된 자막 다운로드
+                'subtitleslangs': 'kr'  # 자막 언어가 영어인 경우(다른 언어로 변경 가능)
+                }
+
+            try:
+                with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                    ydl.download([video_url])
+            
+            except Exception as e:
+                print('[!] Error : {}'.format(e))
+                pass
+        print('[+] Completed download!')
 
 
 class Data(object):
@@ -179,8 +203,15 @@ if __name__ == '__main__':
     L = Listen()
     A = Action()
 
-    data = ""
-    S.speak(data)
-    longtidue, latitude = R.geometry(data)
-    result = R.wether(longtidue, latitude)
-    print (result)
+    # data = ""
+    # S.speak(data)
+    # longtidue, latitude = R.geometry(data)
+    # result = R.wether(longtidue, latitude)
+    # print (result)
+
+    data = L.say()
+
+    youtube_url_list = list()
+    url = "https://www.youtube.com/results?search_query={}".format(data)
+    youtube_url_list.append(url)
+    A.download_video_and_subtitle(youtube_url_list)
