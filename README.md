@@ -7,3 +7,9 @@ Personalized AI Assistant for Everyone
 * Collect activity information of user
 * Get Wether Information
 * Downoad video in youtube
+
+# What I have to Implement
+* Automatic Connecting WIFI
+* Authenticate User
+* Extract basic data
+* Translate English to Korean
