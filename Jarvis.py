@@ -79,6 +79,25 @@ class Search(object):
     def google(self, keyword):
         ''' need to add'''
         pass
+
+    def papago(self, word):
+        headers = {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'X-Naver-Client-Id': '<ID>',
+        'X-Naver-Client-Secret': '<Secret>',
+        }
+
+        data = {
+        'source': 'en',
+        'target': 'ko',
+        'text': word
+        }
+        response = requests.post('https://openapi.naver.com/v1/papago/n2mt', headers=headers, data=data)
+        translated_word = response.text
+        json_result = json.loads(translated_word)
+        result = json_result['message']['result']['translatedText']
+        return result
+
     
     def geometry(self, data):
         # 위도 경도 반환 (카카오 API 사용)
