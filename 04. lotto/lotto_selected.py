@@ -30,3 +30,7 @@ driver.find_element_by_xpath('/html/body/div[1]/div[2]/div[2]/div[3]/input[1]').
 alert = driver.switch_to.alert
 alert.accept()
 driver.find_element_by_xpath('/html/body/div[1]/div[4]/div/div[4]/input').click()
+
+# 탭닫기 & 종료
+driver.close()
+driver.quit()
